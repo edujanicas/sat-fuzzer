@@ -1,3 +1,4 @@
+import os
 import sys
 
 import func
@@ -16,12 +17,13 @@ if __name__ == '__main__':
         print('Provide at least 3 parameters')
         exit(1)
 
-    if len(sys.argv) == 5:
+    if len(sys.argv) == 5 and sys.argv[4].isdigit():
         seed = sys.argv[4]
     else:
         seed = None
 
-    # TODO: check parameters correctness
+    if not os.path.isdir(inputs_path) or not os.path.exists(sut_path):
+        print('The first two parameters must be valid paths')
 
     if mode == 'ub':
         ub.do_ub(sut_path, inputs_path, seed)
