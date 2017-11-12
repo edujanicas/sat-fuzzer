@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 
 import argparse
-import subprocess
-import os
-import glob
-import textwrap
 import collections
+import glob
+import os
+import subprocess
+import textwrap
 
 ################################################################################
 # Argument parsing
@@ -40,6 +40,7 @@ gcov coverage enabled (i.e. `-fprofile-arcs -ftest-coverage`).
 For any issues with the script, please email the course assistants:
     * Anastasios Andronidis -- a.andronidis15@imperial.ac.uk
     * Andrei Lascu -- andrei.lascu10@imperial.ac.uk
+    
 """
 ))
 parser.add_argument("SUT_path",  type=str,
