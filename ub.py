@@ -16,7 +16,8 @@ REGEXES = {
     "USE_AFTER_FREE_REGEX": re.compile('^==.*AddressSanitizer: heap-use-after-free'),
     "HEAP_BUFFER_OVERFLOW_REGEX": re.compile('^==.*AddressSanitizer: heap-buffer-overflow'),
     "STACK_BUFFER_OVERFLOW_REGEX": re.compile('^==.*AddressSanitizer: stack-buffer-overflow'),
-    "SIGNED_INTEGER_OVERFLOW_REGEX": re.compile('^runtime.+signed integer')}
+    "SIGNED_INTEGER_OVERFLOW_REGEX": re.compile('^runtime.+signed integer')
+}
 
 
 def do_ub(sut_path, inputs_path, seed):
@@ -25,8 +26,15 @@ def do_ub(sut_path, inputs_path, seed):
     else:
         random.seed()
 
+    i = 0
+
     while True:
-        input_file = create_input()
+        if i == 0:
+            print("Sending input")
+            input_file = create_input()
+        elif i == 1:
+            print("Sending garbage")
+            input_file = create_garbage()
 
         sut_output = run_sut(input_file, sut_path)
 
@@ -38,15 +46,51 @@ def do_ub(sut_path, inputs_path, seed):
 
         input_file.close()
 
+        i += 1
+        i = i % 2
+
 
 def create_input():
-    cnf = "p cnf 10 100\n"
+    number_of_formulas = 100000
+    number_of_literals = 1000
+    formulas_width = 10
 
-    for i in range(0, 100):
-        for j in range(0, 5):
-            cnf += random.choice(string.digits) + " "
+    cnf = "p cnf " + str(number_of_literals) + " " + str(number_of_formulas) + "\n"
+
+    for i in range(0, number_of_formulas):
+        for j in range(0, formulas_width):
+            cnf += random.choice(["", "-"])
+            cnf += str(1 + int(random.random() * (number_of_literals - 1))) + " "
         cnf += "0\n"
 
+    return make_cnf_file(cnf)
+
+
+def create_garbage():
+    cnf = "p cnf 10 20\n"
+    choice = 0
+
+    while True:
+        if choice == 0:
+            if len(cnf) >= 20:
+                break
+        elif choice == 1:
+            cnf += string.punctuation
+        elif choice == 2:
+            cnf += string.printable
+        elif choice == 3:
+            cnf += string.digits
+        elif choice == 4:
+            cnf += '0'
+        elif choice == 5:
+            cnf += '\n'
+
+        choice = random.randint(0, 5)
+
+    return make_cnf_file(cnf)
+
+
+def make_cnf_file(cnf):
     input_file = tempfile.NamedTemporaryFile(mode='w')
     input_file.write(cnf)
     input_file.flush()
@@ -54,12 +98,13 @@ def create_input():
 
 
 def run_sut(input_file, sut_path):
-    result = subprocess.Popen(["./runsat.sh", input_file.name], stderr=subprocess.PIPE, stdout=subprocess.PIPE,
+    result = subprocess.Popen(["./runsat.sh", input_file.name], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                               cwd=sut_path)
 
     try:
-        sut_output, sut_error = result.communicate(timeout=5)
-        for line in sut_output.decode('ascii'):
+        sut_output, sut_error = result.communicate()
+        sut_output_printable = sut_output.decode('ascii').split('\n')
+        for line in sut_output_printable:
             print(line)
         return sut_error
 
