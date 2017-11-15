@@ -14,7 +14,7 @@ if __name__ == '__main__':
         inputs_path = sys.argv[2]
         mode = sys.argv[3]
     except IndexError:
-        print('Provide at least 3 parameters')
+        print('usage: python fuzzer.py <sut_path> <inputs_path> <mode=ub | func>')
         exit(1)
 
     if len(sys.argv) == 5 and sys.argv[4].isdigit():
