@@ -1,3 +1,4 @@
+import os
 import random
 import re
 import string
@@ -19,6 +20,8 @@ REGEXES = {
     "SIGNED_INTEGER_OVERFLOW_REGEX": re.compile('^runtime.+signed integer')
 }
 
+DIGITS_NO_ZERO = string.digits.replace("0", "")
+
 
 def do_ub(sut_path, inputs_path, seed):
     if seed is not None:
@@ -26,13 +29,13 @@ def do_ub(sut_path, inputs_path, seed):
     else:
         random.seed()
 
-    i = 0
+    j = 0
 
-    while True:
-        if i == 0:
+    for i in range(0, 1):
+        if j == 0:
             print("Sending input")
             input_file = create_input()
-        elif i == 1:
+        elif j == 1:
             print("Sending garbage")
             input_file = create_garbage()
 
@@ -42,25 +45,25 @@ def do_ub(sut_path, inputs_path, seed):
             ubs = check_ub(sut_output)
 
             if ubs > 0:
-                save_input(input_file)
+                save_input(sut_path, input_file)
 
         input_file.close()
 
-        i += 1
-        i = i % 2
+        j += 1
+        j = i % 2
 
 
 def create_input():
     number_of_formulas = 100000
-    number_of_literals = 1000
+    NUMBER_OF_LITERALS = 999
     formulas_width = 10
 
-    cnf = "p cnf " + str(number_of_literals) + " " + str(number_of_formulas) + "\n"
+    cnf = "p cnf " + str(NUMBER_OF_LITERALS) + " " + str(number_of_formulas) + "\n"
 
     for i in range(0, number_of_formulas):
         for j in range(0, formulas_width):
-            cnf += random.choice(["", "-"])
-            cnf += str(1 + int(random.random() * (number_of_literals - 1))) + " "
+            cnf += ["", "-"][int(random.random() * 1)]
+            cnf += DIGITS_NO_ZERO[int(random.random() * 9)] + " "
         cnf += "0\n"
 
     return make_cnf_file(cnf)
@@ -116,11 +119,12 @@ def run_sut(input_file, sut_path):
     return None
 
 
-def save_input(input_file):
+def save_input(sut_path, input_file):
     global saved_inputs_id
 
     # TODO decide what to do after 20 inputs have been found
-    util.save_text(SAVED_INPUTS_PATH + "interesting_input{}.txt".format(saved_inputs_id), input_file.name)
+    util.save_text(os.path.join([sut_path, SAVED_INPUTS_PATH, "interesting_input{}.txt".format(saved_inputs_id)]),
+                   input_file.name)
 
     saved_inputs_id = (saved_inputs_id + 1) % 20
 
