@@ -45,8 +45,8 @@ def do_func(sut_path, inputs_path, seed):
         for i, new_formula in enumerate(new_formulae):
             print('Formula {}: Writing transformation {}'.format(x, i))
 
-            cnf_filename = os.path.join(FOLLOW_UP_TESTS, '{}_{}.cnf'.format(str(x), str(i).zfill(2)))
-            txt_filename = os.path.join(FOLLOW_UP_TESTS, '{}_{}.txt'.format(str(x), str(i).zfill(2)))
+            cnf_filename = os.path.join(FOLLOW_UP_TESTS, '{}_{}.cnf'.format(str(x).zfill(2), str(i).zfill(2)))
+            txt_filename = os.path.join(FOLLOW_UP_TESTS, '{}_{}.txt'.format(str(x).zfill(2), str(i).zfill(2)))
 
             with open(cnf_filename, 'w') as new_cnf, open(txt_filename, 'w') as new_txt:
                 # TODO: You might change some values
