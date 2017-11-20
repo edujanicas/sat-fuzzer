@@ -1,0 +1,30 @@
+\input{preamble}
+
+\begin{document}
+\coverpage{Fuzzer}
+  
+\section{Introduction}  
+We have implemented a black-box fuzzer using the Python programming language. It can be run in two different modes, which will be referred to as \texttt{ub} mode and \texttt{func} mode in the following sections. It also makes use of a seed provided as an argument which allows our fuzzer to exhibit a deterministic behaviour.
+
+\section{\texttt{ub} mode}
+
+\section{\texttt{func} mode}
+When using this mode, the fuzzer behaves in a \textit{blind} fashion, generating new inputs by mutating pre-existing formulae. Only valid inputs will be generated in this phase.
+
+We have developed a set of rules to create new formulae, which can be chained together to generate more complex transformations of existing inputs.
+
+These rules are outlined below:
+
+    # Apply a set of transformations based on these rules:
+    # 0 - 4 Swap clauses (1)
+    # 5 - 9 Swap literals inside a clause (2)
+    # 10 - 14 Add clauses (3)
+    # 15 - 19 Remove Clauses (4)
+    # 20 - 24 (1+2)
+    # 25 - 29 (1+3)
+    # 30 - 34 (1+4)
+    # 35 - 39 (2+3)
+    # 40 - 44 (1+2+3)
+    # 45 - 49 (1+2+4)
+
+\end{document}
