@@ -1,0 +1,9 @@
+p cnf 10 20
+!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+0123456789
+0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ 	
+0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ 	
+!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+0
+012345678900123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ 	
+0!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
