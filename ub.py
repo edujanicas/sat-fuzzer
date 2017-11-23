@@ -20,6 +20,10 @@ REGEXES = {
     "SIGNED_INTEGER_OVERFLOW_REGEX": re.compile('^.*runtime.+signed integer')
 }
 
+FIRED_REGEXES = {}
+
+first_cycle = True
+
 INTERSTING_CNFS = ["p cnf 0 0",
                    "p cnf 10 20\n!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~",
                    "p cnf 10 20\n\n\n0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ 	\n0\n00123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ 	\n",
@@ -123,11 +127,10 @@ def run_sut(input_file, sut_path):
     try:
         sut_output, sut_error = result.communicate(timeout=20)
 
-
         sut_output_printable = sut_output.decode('ascii').split('\n')
 
-        for line in sut_output_printable:
-            print(line)
+        # for line in sut_output_printable:
+        # print(line)
 
     except subprocess.TimeoutExpired:
         result.kill()
@@ -136,7 +139,7 @@ def run_sut(input_file, sut_path):
 
 
 def save_input(sut_path, temp_file):
-    global saved_inputs_id
+    global saved_inputs_id, first_cycle, REGEXES, FIRED_REGEXES
 
     os.makedirs(os.path.join(sut_path, SAVED_INPUTS_PATH), exist_ok=True)
 
@@ -147,6 +150,11 @@ def save_input(sut_path, temp_file):
 
     saved_inputs_id = (saved_inputs_id + 1) % 20
 
+    if first_cycle is True and saved_inputs_id == 19:
+        first_cycle = False
+        for key in set(REGEXES) - set(FIRED_REGEXES):
+            del REGEXES[key]
+
 
 def check_ub(sut_error):
     ubs = 0
@@ -155,5 +163,6 @@ def check_ub(sut_error):
             if value.match(line):
                 print(line)
                 ubs += 1
+                FIRED_REGEXES[key] = value
 
     return ubs
